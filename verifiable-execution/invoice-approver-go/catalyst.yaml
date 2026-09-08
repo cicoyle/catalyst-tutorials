@@ -1,0 +1,14 @@
+# Run on Diagrid Catalyst:
+#   export OPENAI_API_KEY=sk-...
+#   diagrid dev run -f catalyst.yaml --project invoice-audit-demo
+version: 1
+common:
+  logLevel: info
+  appLogDestination: console
+  enableAppHealthCheck: false
+apps:
+  - appID: invoice-approver
+    appDirPath: ./
+    command: ["go", "run", "."]
+    env:
+      GOWORK: "off"
