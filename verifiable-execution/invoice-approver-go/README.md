@@ -215,9 +215,12 @@ signed.
 
 ## 4. Tamper With the Database Directly
 
-Now edit the signed history in your own Postgres, behind Catalyst's back. Dapr's
-Postgres store keeps one row per key in a table called `state`; the workflow
-history rows have keys like
+Now edit the signed history in your own Postgres, behind Catalyst's back. You
+never created a table - the Dapr sidecar did, on first use. The
+`state.postgresql` component defaults to **v1**, which keeps one row per key in
+a table called `state` with a `jsonb` value column; binary values are stored as
+a base64 JSON string, which is what the script decodes. The workflow history
+rows have keys like
 
 ```
 invoice-approver||dapr.internal.prj-<id>.invoice-approver.workflow||inv-0312-run1||history-000007
