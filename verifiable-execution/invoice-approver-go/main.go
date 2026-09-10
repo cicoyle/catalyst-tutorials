@@ -13,14 +13,19 @@
 //	OPENAI_API_KEY  required
 //	OPENAI_MODEL    optional, default gpt-4o
 //	INVOICE_ID      optional, default INV-2026-0311 (ex: INV-2026-0312 gets held)
-//	GOAI_RUN        optional fixed workflow instance ID, handy for export/verify
+//	INSTANCE_ID     optional fixed workflow instance ID, handy for export/verify
+//
+// After the run finishes the process stays up as a workflow worker until
+// Ctrl-C, so the instance can be rerun from the console or the CLI.
 package main
 
 import (
 	"context"
 	"fmt"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 
 	goai "github.com/diagridio/go-ai"
 	"github.com/diagridio/go-ai/adapters/langchaingo"
@@ -188,11 +193,20 @@ func main() {
 	fmt.Printf("Checks   : vendor=%s policy=%s\n", result.VendorCheck, result.PolicyCheck)
 	fmt.Printf("Decision : %s\n", result.Decision)
 	fmt.Printf("Outcome  : %s (receipt %s)\n", result.Outcome, result.Receipt)
+
+	// Stay connected as a workflow worker so the instance can be rerun from
+	// the console or `diagrid workflow rerun` - reruns need a host for the
+	// workflow actor. Ctrl-C when you're done.
+	fmt.Println()
+	fmt.Println("Worker still connected - rerun or tamper now. Press Ctrl-C to stop.")
+	ctx, stop := signal.NotifyContext(ctx, os.Interrupt, syscall.SIGTERM)
+	defer stop()
+	<-ctx.Done()
 }
 
-// pin a fixed instance ID when GOAI_RUN is set so you know what to export
+// pin a fixed instance ID when INSTANCE_ID is set so you know what to export
 func invokeOpts() []goai.InvokeOptions {
-	id := os.Getenv("GOAI_RUN")
+	id := os.Getenv("INSTANCE_ID")
 	if id != "" {
 		return []goai.InvokeOptions{{InstanceID: id}}
 	}
