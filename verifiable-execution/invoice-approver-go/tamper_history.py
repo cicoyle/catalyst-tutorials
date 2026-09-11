@@ -26,7 +26,7 @@ stops. Pass --apply to actually write.
   uv run --with 'psycopg[binary]' python tamper_history.py            # dry run
   uv run --with 'psycopg[binary]' python tamper_history.py --apply     # write it
 
-  python3 tamper_history.py --archive receipt.json --out receipt-tampered.json
+  uv run python tamper_history.py --archive receipt.json --out receipt-tampered.json
 """
 import base64
 import json
