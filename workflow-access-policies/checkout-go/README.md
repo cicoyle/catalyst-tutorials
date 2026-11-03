@@ -98,7 +98,11 @@ diagrid workflow start Checkout --id checkout --instance-id order-001 -p demo-wf
   -d '{"orderId":"ORDER-001","customer":"ACME-4242","amount":250000}'
 ```
 
-The fraud check passes, but the workflow fails at `ChargeCard` and nothing prints in payments-service. Open the `order-001` execution in the [Catalyst web console](https://catalyst.diagrid.io), or from the CLI:
+The fraud check passes, but the workflow fails at `ChargeCard` and nothing prints in payments-service. Open the `order-001` execution in the [Catalyst web console](https://catalyst.diagrid.io) and select `ChargeCard`:
+
+![order-001 in the Catalyst console - fraud-check succeeds, ChargeCard fails with access denied by workflow access policy, history integrity Verified](docs/images/access-denied.png)
+
+Or from the CLI:
 
 ```bash
 diagrid workflow get order-001 --id checkout -p demo-wf-acl
